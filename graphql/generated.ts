@@ -22,6 +22,7 @@ export type Scalars = {
 export type AdjustmentOrder = {
   __typename?: 'AdjustmentOrder';
   asset: Scalars['String']['output'];
+  id: Scalars['String']['output'];
   maxSpreadRate: Scalars['Float']['output'];
   quantity: Scalars['Int']['output'];
 };
@@ -53,7 +54,7 @@ export type MutationCreatedAdjustmentOrderArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  adjustmentOrders?: Maybe<Array<Maybe<AdjustmentOrder>>>;
+  adjustmentOrders: Array<AdjustmentOrder>;
 };
 
 
@@ -69,7 +70,7 @@ export type CreateAdjustmentOrderMutationVariables = Exact<{
 }>;
 
 
-export type CreateAdjustmentOrderMutation = { __typename?: 'Mutation', createdAdjustmentOrder?: { __typename?: 'AdjustmentOrder', asset: string, maxSpreadRate: number, quantity: number } | null };
+export type CreateAdjustmentOrderMutation = { __typename?: 'Mutation', createdAdjustmentOrder?: { __typename?: 'AdjustmentOrder', id: string, asset: string, maxSpreadRate: number, quantity: number } | null };
 
 export type CancelAdjustmentOrderMutationVariables = Exact<{
   asset: Scalars['String']['input'];
@@ -77,14 +78,14 @@ export type CancelAdjustmentOrderMutationVariables = Exact<{
 }>;
 
 
-export type CancelAdjustmentOrderMutation = { __typename?: 'Mutation', canceledAdjustmentOrder?: { __typename?: 'AdjustmentOrder', asset: string, maxSpreadRate: number, quantity: number } | null };
+export type CancelAdjustmentOrderMutation = { __typename?: 'Mutation', canceledAdjustmentOrder?: { __typename?: 'AdjustmentOrder', id: string, asset: string, maxSpreadRate: number, quantity: number } | null };
 
 export type GetAdjustmentOrdersQueryVariables = Exact<{
   credentials: BinanceCredentialsInput;
 }>;
 
 
-export type GetAdjustmentOrdersQuery = { __typename?: 'Query', adjustmentOrders?: Array<{ __typename?: 'AdjustmentOrder', asset: string, maxSpreadRate: number, quantity: number } | null> | null };
+export type GetAdjustmentOrdersQuery = { __typename?: 'Query', adjustmentOrders: Array<{ __typename?: 'AdjustmentOrder', id: string, asset: string, maxSpreadRate: number, quantity: number }> };
 
 
 export const CreateAdjustmentOrderDocument = gql`
@@ -95,6 +96,7 @@ export const CreateAdjustmentOrderDocument = gql`
     quantity: $quantity
     credentials: $credentials
   ) {
+    id
     asset
     maxSpreadRate
     quantity
@@ -133,6 +135,7 @@ export type CreateAdjustmentOrderMutationOptions = Apollo.BaseMutationOptions<Cr
 export const CancelAdjustmentOrderDocument = gql`
     mutation CancelAdjustmentOrder($asset: String!, $credentials: BinanceCredentialsInput!) {
   canceledAdjustmentOrder(asset: $asset, credentials: $credentials) {
+    id
     asset
     maxSpreadRate
     quantity
@@ -169,6 +172,7 @@ export type CancelAdjustmentOrderMutationOptions = Apollo.BaseMutationOptions<Ca
 export const GetAdjustmentOrdersDocument = gql`
     query GetAdjustmentOrders($credentials: BinanceCredentialsInput!) {
   adjustmentOrders(credentials: $credentials) {
+    id
     asset
     maxSpreadRate
     quantity
@@ -298,6 +302,7 @@ export type ResolversParentTypes = {
 
 export type AdjustmentOrderResolvers<ContextType = any, ParentType extends ResolversParentTypes['AdjustmentOrder'] = ResolversParentTypes['AdjustmentOrder']> = {
   asset?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   maxSpreadRate?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   quantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -309,7 +314,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  adjustmentOrders?: Resolver<Maybe<Array<Maybe<ResolversTypes['AdjustmentOrder']>>>, ParentType, ContextType, RequireFields<QueryAdjustmentOrdersArgs, 'credentials'>>;
+  adjustmentOrders?: Resolver<Array<ResolversTypes['AdjustmentOrder']>, ParentType, ContextType, RequireFields<QueryAdjustmentOrdersArgs, 'credentials'>>;
 };
 
 export type Resolvers<ContextType = any> = {

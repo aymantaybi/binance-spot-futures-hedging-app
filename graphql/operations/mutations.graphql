@@ -10,6 +10,7 @@ mutation CreateAdjustmentOrder(
     quantity: $quantity
     credentials: $credentials
   ) {
+    id
     asset
     maxSpreadRate
     quantity
@@ -18,6 +19,7 @@ mutation CreateAdjustmentOrder(
 
 mutation CancelAdjustmentOrder($asset: String!, $credentials: BinanceCredentialsInput!) {
   canceledAdjustmentOrder(asset: $asset, credentials: $credentials) {
+    id
     asset
     maxSpreadRate
     quantity

@@ -1,5 +1,7 @@
 import { MainClient, USDMClient } from 'binance';
 
+export * as inputValidation from './validation';
+
 export function createBinanceClientsInstance(apiKey: string, apiSecret: string) {
   const spot = new MainClient({
     api_key: apiKey,

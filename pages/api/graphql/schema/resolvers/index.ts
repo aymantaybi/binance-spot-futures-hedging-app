@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import {
   AdjustmentOrder,
   BinanceCredentialsInput,
@@ -17,8 +18,9 @@ export const resolvers: Resolvers = {
   },
   Mutation: {
     createdAdjustmentOrder: (_, { asset, quantity, maxSpreadRate, credentials }) => {
-      adjustmentOrders.push({ asset, quantity, maxSpreadRate, credentials });
-      return { asset, quantity, maxSpreadRate };
+      const id = randomUUID();
+      adjustmentOrders.push({ id, asset, quantity, maxSpreadRate, credentials });
+      return { id, asset, quantity, maxSpreadRate };
     },
     canceledAdjustmentOrder: (_, { asset, credentials }) => {
       const adjustmentOrderIndex = adjustmentOrders.findIndex(
