@@ -16,11 +16,14 @@
     "prettier:write": "prettier --write \"**/*.{ts,tsx}\"",
     "test": "npm run prettier:check && npm run lint && npm run typecheck && npm run jest",
     "storybook": "start-storybook -p 7001",
-    "storybook:build": "build-storybook"
+    "storybook:build": "build-storybook",
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.17",
     "@emotion/react": "^11.10.4",
     "@emotion/server": "^11.10.0",
+    "@graphql-codegen/typescript-resolvers": "^4.0.1",
     "@mantine/carousel": "6.0.2",
     "@mantine/core": "6.0.2",
     "@mantine/dates": "6.0.2",
@@ -34,12 +37,20 @@
     "cookies-next": "^2.1.1",
     "dayjs": "^1.11.6",
     "embla-carousel-react": "^7.0.3",
+    "graphql": "^16.7.1",
+    "graphql-yoga": "^4.0.3",
     "next": "13.2.4",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.8",
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/client-preset": "4.1.0",
+    "@graphql-codegen/introspection": "4.0.0",
+    "@graphql-codegen/typescript": "^4.0.1",
+    "@graphql-codegen/typescript-document-nodes": "4.0.1",
+    "@graphql-codegen/typescript-react-apollo": "^3.3.7",
     "@next/eslint-plugin-next": "^12.1.4",
     "@storybook/react": "^6.5.13",
     "@testing-library/dom": "^8.12.0",

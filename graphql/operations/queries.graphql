@@ -1,0 +1,3 @@
+query GetGreetings($name: String) {
+  greetings(name: $name)
+}
