@@ -1,3 +1,9 @@
-query GetGreetings($name: String) {
-  greetings(name: $name)
+query GetAdjustmentOrders($credentials: BinanceCredentialsInput!) {
+  adjustmentOrders(credentials: $credentials) {
+    asset
+    maxSpreadRate
+    quantity
+  }
 }
+
+

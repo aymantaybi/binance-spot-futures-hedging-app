@@ -1,0 +1,25 @@
+mutation CreateAdjustmentOrder(
+  $asset: String!
+  $maxSpreadRate: Float!
+  $quantity: Int!
+  $credentials: BinanceCredentialsInput!
+) {
+  createdAdjustmentOrder(
+    asset: $asset
+    maxSpreadRate: $maxSpreadRate
+    quantity: $quantity
+    credentials: $credentials
+  ) {
+    asset
+    maxSpreadRate
+    quantity
+  }
+}
+
+mutation CancelAdjustmentOrder($asset: String!, $credentials: BinanceCredentialsInput!) {
+  canceledAdjustmentOrder(asset: $asset, credentials: $credentials) {
+    asset
+    maxSpreadRate
+    quantity
+  }
+}

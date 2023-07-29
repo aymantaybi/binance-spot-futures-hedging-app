@@ -1,3 +1,19 @@
+input BinanceCredentialsInput {
+  apiKey: String!
+  apiSecret: String!
+}
+
+type AdjustmentOrder {
+  asset: String!
+  quantity: Int!
+  maxSpreadRate: Float!
+}
+
 type Query {
-  greetings(name: String): String
+  adjustmentOrders(credentials: BinanceCredentialsInput!): [AdjustmentOrder]
+}
+
+type Mutation {
+  createdAdjustmentOrder(asset: String!, quantity: Int!, maxSpreadRate: Float!, credentials: BinanceCredentialsInput!): AdjustmentOrder
+  canceledAdjustmentOrder(asset: String!, credentials: BinanceCredentialsInput!): AdjustmentOrder
 }
