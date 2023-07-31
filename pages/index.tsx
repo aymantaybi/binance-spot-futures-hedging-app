@@ -81,6 +81,8 @@ function CreateAdjustmentOrderForm(props: CreateAdjustmentOrderFormProps) {
 
   const precision = new Decimal(stepSize).decimalPlaces();
 
+  const canCreateAdjustmentOrder = asset !== undefined && quantity !== 0;
+
   return (
     <>
       <Title mb={5} order={5}>
@@ -117,7 +119,7 @@ function CreateAdjustmentOrderForm(props: CreateAdjustmentOrderFormProps) {
             onChange={handleMaxSpreadRateChange}
           />
           <Button
-            disabled={asset === undefined}
+            disabled={!canCreateAdjustmentOrder}
             size="xs"
             maw={100}
             sx={{ alignSelf: 'center' }}
