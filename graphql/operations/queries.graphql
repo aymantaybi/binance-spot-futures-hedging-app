@@ -7,4 +7,10 @@ query GetAdjustmentOrders($credentials: BinanceCredentialsInput!) {
   }
 }
 
-
+query GetHedgeableAssets {
+  hedgeableAssets {
+    asset
+    stepSize
+    symbol
+  }
+}

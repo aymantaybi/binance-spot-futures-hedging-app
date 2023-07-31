@@ -4,17 +4,17 @@ import {
   BinanceCredentialsInput,
   Resolvers,
 } from '../../../../../graphql/generated';
+import { ExchangeFetcher } from '../../../../../helpers/fetcher';
 
 const adjustmentOrders: Array<AdjustmentOrder & { credentials: BinanceCredentialsInput }> = [];
 
 export const resolvers: Resolvers = {
   Query: {
-    adjustmentOrders: (_, { credentials }) => {
-      console.log(adjustmentOrders);
-      return adjustmentOrders.filter(
+    adjustmentOrders: (_, { credentials }) =>
+      adjustmentOrders.filter(
         (order) => order.credentials.apiKey === credentials.apiKey && order.credentials.apiSecret
-      );
-    },
+      ),
+    hedgeableAssets: () => ExchangeFetcher.getHedgeableAssets(),
   },
   Mutation: {
     createdAdjustmentOrder: (_, { asset, quantity, maxSpreadRate, credentials }) => {

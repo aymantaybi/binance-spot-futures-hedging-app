@@ -17,6 +17,7 @@ import {
   LazyQueryExecFunction,
   MutationFunctionOptions,
 } from '@apollo/client';
+import Decimal from 'decimal.js';
 import { inputValidation } from '../helpers';
 import {
   AdjustmentOrder,
@@ -28,6 +29,7 @@ import {
   CreateAdjustmentOrderMutation,
   useCancelAdjustmentOrderMutation,
   CancelAdjustmentOrderMutation,
+  useGetHedgeableAssetsQuery,
 } from '../graphql/generated';
 
 interface CreateAdjustmentOrderFormProps {
@@ -57,9 +59,27 @@ function CreateAdjustmentOrderForm(props: CreateAdjustmentOrderFormProps) {
   const [quantity, setQuantity] = useState(0);
   const [maxSpreadRate, setMaxSpreadRate] = useState(0);
 
-  const handleAssetsChange = (value: string) => setAsset(value);
+  const handleAssetChange = (value: string) => setAsset(value);
   const handleQuantityChange = (value: number | '') => setQuantity(Number(value));
   const handleMaxSpreadRateChange = (value: number | '') => setMaxSpreadRate(Number(value));
+
+  const resetInputs = () => {
+    setAsset(undefined);
+    setQuantity(0);
+    setMaxSpreadRate(0);
+  };
+
+  const { data } = useGetHedgeableAssetsQuery();
+
+  const items = data
+    ? data.hedgeableAssets.map((item) => ({ value: item.asset, label: item.asset }))
+    : [];
+
+  const { stepSize } = (data?.hedgeableAssets || []).find((item) => item.asset === asset) || {
+    stepSize: 1,
+  };
+
+  const precision = new Decimal(stepSize).decimalPlaces();
 
   return (
     <>
@@ -73,18 +93,18 @@ function CreateAdjustmentOrderForm(props: CreateAdjustmentOrderFormProps) {
             size="xs"
             value={asset}
             withAsterisk
-            onChange={handleAssetsChange}
-            data={[
-              { value: 'AXS', label: 'AXS' },
-              { value: 'BTC', label: 'BTC' },
-              { value: 'ETH', label: 'ETH' },
-            ]}
+            onChange={handleAssetChange}
+            data={items}
+            searchable
+            nothingFound="No options"
           />
           <NumberInput
             label="Quantity"
             size="xs"
             withAsterisk
             value={quantity}
+            precision={precision}
+            step={stepSize}
             onChange={handleQuantityChange}
           />
           <NumberInput
@@ -110,7 +130,7 @@ function CreateAdjustmentOrderForm(props: CreateAdjustmentOrderFormProps) {
                   maxSpreadRate,
                   credentials: binanceCredentials,
                 },
-              });
+              }).then(resetInputs);
             }}
           >
             Create

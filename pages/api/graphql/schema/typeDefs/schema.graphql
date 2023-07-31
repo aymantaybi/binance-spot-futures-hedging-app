@@ -6,15 +6,27 @@ input BinanceCredentialsInput {
 type AdjustmentOrder {
   id: String!
   asset: String!
-  quantity: Int!
+  quantity: Float!
   maxSpreadRate: Float!
+}
+
+type HedgeableAsset {
+  asset: String!
+  symbol: String!
+  stepSize: Float!
 }
 
 type Query {
   adjustmentOrders(credentials: BinanceCredentialsInput!): [AdjustmentOrder!]!
+  hedgeableAssets: [HedgeableAsset!]!
 }
 
 type Mutation {
-  createdAdjustmentOrder(asset: String!, quantity: Int!, maxSpreadRate: Float!, credentials: BinanceCredentialsInput!): AdjustmentOrder
+  createdAdjustmentOrder(
+    asset: String!
+    quantity: Float!
+    maxSpreadRate: Float!
+    credentials: BinanceCredentialsInput!
+  ): AdjustmentOrder
   canceledAdjustmentOrder(asset: String!, credentials: BinanceCredentialsInput!): AdjustmentOrder
 }

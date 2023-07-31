@@ -1,22 +1,27 @@
 import { GraphQLResolveInfo } from 'graphql';
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
-export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = {
+  [_ in K]?: never;
+};
+export type Incremental<T> =
+  | T
+  | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string; output: string; }
-  String: { input: string; output: string; }
-  Boolean: { input: boolean; output: boolean; }
-  Int: { input: number; output: number; }
-  Float: { input: number; output: number; }
+  ID: { input: string; output: string };
+  String: { input: string; output: string };
+  Boolean: { input: boolean; output: boolean };
+  Int: { input: number; output: number };
+  Float: { input: number; output: number };
 };
 
 export type AdjustmentOrder = {
@@ -24,12 +29,19 @@ export type AdjustmentOrder = {
   asset: Scalars['String']['output'];
   id: Scalars['String']['output'];
   maxSpreadRate: Scalars['Float']['output'];
-  quantity: Scalars['Int']['output'];
+  quantity: Scalars['Float']['output'];
 };
 
 export type BinanceCredentialsInput = {
   apiKey: Scalars['String']['input'];
   apiSecret: Scalars['String']['input'];
+};
+
+export type HedgeableAsset = {
+  __typename?: 'HedgeableAsset';
+  asset: Scalars['String']['output'];
+  stepSize: Scalars['Float']['output'];
+  symbol: Scalars['String']['output'];
 };
 
 export type Mutation = {
@@ -38,25 +50,23 @@ export type Mutation = {
   createdAdjustmentOrder?: Maybe<AdjustmentOrder>;
 };
 
-
 export type MutationCanceledAdjustmentOrderArgs = {
   asset: Scalars['String']['input'];
   credentials: BinanceCredentialsInput;
 };
 
-
 export type MutationCreatedAdjustmentOrderArgs = {
   asset: Scalars['String']['input'];
   credentials: BinanceCredentialsInput;
   maxSpreadRate: Scalars['Float']['input'];
-  quantity: Scalars['Int']['input'];
+  quantity: Scalars['Float']['input'];
 };
 
 export type Query = {
   __typename?: 'Query';
   adjustmentOrders: Array<AdjustmentOrder>;
+  hedgeableAssets: Array<HedgeableAsset>;
 };
-
 
 export type QueryAdjustmentOrdersArgs = {
   credentials: BinanceCredentialsInput;
@@ -65,45 +75,88 @@ export type QueryAdjustmentOrdersArgs = {
 export type CreateAdjustmentOrderMutationVariables = Exact<{
   asset: Scalars['String']['input'];
   maxSpreadRate: Scalars['Float']['input'];
-  quantity: Scalars['Int']['input'];
+  quantity: Scalars['Float']['input'];
   credentials: BinanceCredentialsInput;
 }>;
 
-
-export type CreateAdjustmentOrderMutation = { __typename?: 'Mutation', createdAdjustmentOrder?: { __typename?: 'AdjustmentOrder', id: string, asset: string, maxSpreadRate: number, quantity: number } | null };
+export type CreateAdjustmentOrderMutation = {
+  __typename?: 'Mutation';
+  createdAdjustmentOrder?: {
+    __typename?: 'AdjustmentOrder';
+    id: string;
+    asset: string;
+    maxSpreadRate: number;
+    quantity: number;
+  } | null;
+};
 
 export type CancelAdjustmentOrderMutationVariables = Exact<{
   asset: Scalars['String']['input'];
   credentials: BinanceCredentialsInput;
 }>;
 
-
-export type CancelAdjustmentOrderMutation = { __typename?: 'Mutation', canceledAdjustmentOrder?: { __typename?: 'AdjustmentOrder', id: string, asset: string, maxSpreadRate: number, quantity: number } | null };
+export type CancelAdjustmentOrderMutation = {
+  __typename?: 'Mutation';
+  canceledAdjustmentOrder?: {
+    __typename?: 'AdjustmentOrder';
+    id: string;
+    asset: string;
+    maxSpreadRate: number;
+    quantity: number;
+  } | null;
+};
 
 export type GetAdjustmentOrdersQueryVariables = Exact<{
   credentials: BinanceCredentialsInput;
 }>;
 
+export type GetAdjustmentOrdersQuery = {
+  __typename?: 'Query';
+  adjustmentOrders: Array<{
+    __typename?: 'AdjustmentOrder';
+    id: string;
+    asset: string;
+    maxSpreadRate: number;
+    quantity: number;
+  }>;
+};
 
-export type GetAdjustmentOrdersQuery = { __typename?: 'Query', adjustmentOrders: Array<{ __typename?: 'AdjustmentOrder', id: string, asset: string, maxSpreadRate: number, quantity: number }> };
+export type GetHedgeableAssetsQueryVariables = Exact<{ [key: string]: never }>;
 
+export type GetHedgeableAssetsQuery = {
+  __typename?: 'Query';
+  hedgeableAssets: Array<{
+    __typename?: 'HedgeableAsset';
+    asset: string;
+    stepSize: number;
+    symbol: string;
+  }>;
+};
 
 export const CreateAdjustmentOrderDocument = gql`
-    mutation CreateAdjustmentOrder($asset: String!, $maxSpreadRate: Float!, $quantity: Int!, $credentials: BinanceCredentialsInput!) {
-  createdAdjustmentOrder(
-    asset: $asset
-    maxSpreadRate: $maxSpreadRate
-    quantity: $quantity
-    credentials: $credentials
+  mutation CreateAdjustmentOrder(
+    $asset: String!
+    $maxSpreadRate: Float!
+    $quantity: Float!
+    $credentials: BinanceCredentialsInput!
   ) {
-    id
-    asset
-    maxSpreadRate
-    quantity
+    createdAdjustmentOrder(
+      asset: $asset
+      maxSpreadRate: $maxSpreadRate
+      quantity: $quantity
+      credentials: $credentials
+    ) {
+      id
+      asset
+      maxSpreadRate
+      quantity
+    }
   }
-}
-    `;
-export type CreateAdjustmentOrderMutationFn = Apollo.MutationFunction<CreateAdjustmentOrderMutation, CreateAdjustmentOrderMutationVariables>;
+`;
+export type CreateAdjustmentOrderMutationFn = Apollo.MutationFunction<
+  CreateAdjustmentOrderMutation,
+  CreateAdjustmentOrderMutationVariables
+>;
 
 /**
  * __useCreateAdjustmentOrderMutation__
@@ -125,24 +178,41 @@ export type CreateAdjustmentOrderMutationFn = Apollo.MutationFunction<CreateAdju
  *   },
  * });
  */
-export function useCreateAdjustmentOrderMutation(baseOptions?: Apollo.MutationHookOptions<CreateAdjustmentOrderMutation, CreateAdjustmentOrderMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateAdjustmentOrderMutation, CreateAdjustmentOrderMutationVariables>(CreateAdjustmentOrderDocument, options);
-      }
-export type CreateAdjustmentOrderMutationHookResult = ReturnType<typeof useCreateAdjustmentOrderMutation>;
-export type CreateAdjustmentOrderMutationResult = Apollo.MutationResult<CreateAdjustmentOrderMutation>;
-export type CreateAdjustmentOrderMutationOptions = Apollo.BaseMutationOptions<CreateAdjustmentOrderMutation, CreateAdjustmentOrderMutationVariables>;
-export const CancelAdjustmentOrderDocument = gql`
-    mutation CancelAdjustmentOrder($asset: String!, $credentials: BinanceCredentialsInput!) {
-  canceledAdjustmentOrder(asset: $asset, credentials: $credentials) {
-    id
-    asset
-    maxSpreadRate
-    quantity
-  }
+export function useCreateAdjustmentOrderMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateAdjustmentOrderMutation,
+    CreateAdjustmentOrderMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<CreateAdjustmentOrderMutation, CreateAdjustmentOrderMutationVariables>(
+    CreateAdjustmentOrderDocument,
+    options
+  );
 }
-    `;
-export type CancelAdjustmentOrderMutationFn = Apollo.MutationFunction<CancelAdjustmentOrderMutation, CancelAdjustmentOrderMutationVariables>;
+export type CreateAdjustmentOrderMutationHookResult = ReturnType<
+  typeof useCreateAdjustmentOrderMutation
+>;
+export type CreateAdjustmentOrderMutationResult =
+  Apollo.MutationResult<CreateAdjustmentOrderMutation>;
+export type CreateAdjustmentOrderMutationOptions = Apollo.BaseMutationOptions<
+  CreateAdjustmentOrderMutation,
+  CreateAdjustmentOrderMutationVariables
+>;
+export const CancelAdjustmentOrderDocument = gql`
+  mutation CancelAdjustmentOrder($asset: String!, $credentials: BinanceCredentialsInput!) {
+    canceledAdjustmentOrder(asset: $asset, credentials: $credentials) {
+      id
+      asset
+      maxSpreadRate
+      quantity
+    }
+  }
+`;
+export type CancelAdjustmentOrderMutationFn = Apollo.MutationFunction<
+  CancelAdjustmentOrderMutation,
+  CancelAdjustmentOrderMutationVariables
+>;
 
 /**
  * __useCancelAdjustmentOrderMutation__
@@ -162,23 +232,37 @@ export type CancelAdjustmentOrderMutationFn = Apollo.MutationFunction<CancelAdju
  *   },
  * });
  */
-export function useCancelAdjustmentOrderMutation(baseOptions?: Apollo.MutationHookOptions<CancelAdjustmentOrderMutation, CancelAdjustmentOrderMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CancelAdjustmentOrderMutation, CancelAdjustmentOrderMutationVariables>(CancelAdjustmentOrderDocument, options);
-      }
-export type CancelAdjustmentOrderMutationHookResult = ReturnType<typeof useCancelAdjustmentOrderMutation>;
-export type CancelAdjustmentOrderMutationResult = Apollo.MutationResult<CancelAdjustmentOrderMutation>;
-export type CancelAdjustmentOrderMutationOptions = Apollo.BaseMutationOptions<CancelAdjustmentOrderMutation, CancelAdjustmentOrderMutationVariables>;
-export const GetAdjustmentOrdersDocument = gql`
-    query GetAdjustmentOrders($credentials: BinanceCredentialsInput!) {
-  adjustmentOrders(credentials: $credentials) {
-    id
-    asset
-    maxSpreadRate
-    quantity
-  }
+export function useCancelAdjustmentOrderMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CancelAdjustmentOrderMutation,
+    CancelAdjustmentOrderMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<CancelAdjustmentOrderMutation, CancelAdjustmentOrderMutationVariables>(
+    CancelAdjustmentOrderDocument,
+    options
+  );
 }
-    `;
+export type CancelAdjustmentOrderMutationHookResult = ReturnType<
+  typeof useCancelAdjustmentOrderMutation
+>;
+export type CancelAdjustmentOrderMutationResult =
+  Apollo.MutationResult<CancelAdjustmentOrderMutation>;
+export type CancelAdjustmentOrderMutationOptions = Apollo.BaseMutationOptions<
+  CancelAdjustmentOrderMutation,
+  CancelAdjustmentOrderMutationVariables
+>;
+export const GetAdjustmentOrdersDocument = gql`
+  query GetAdjustmentOrders($credentials: BinanceCredentialsInput!) {
+    adjustmentOrders(credentials: $credentials) {
+      id
+      asset
+      maxSpreadRate
+      quantity
+    }
+  }
+`;
 
 /**
  * __useGetAdjustmentOrdersQuery__
@@ -196,26 +280,98 @@ export const GetAdjustmentOrdersDocument = gql`
  *   },
  * });
  */
-export function useGetAdjustmentOrdersQuery(baseOptions: Apollo.QueryHookOptions<GetAdjustmentOrdersQuery, GetAdjustmentOrdersQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAdjustmentOrdersQuery, GetAdjustmentOrdersQueryVariables>(GetAdjustmentOrdersDocument, options);
-      }
-export function useGetAdjustmentOrdersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAdjustmentOrdersQuery, GetAdjustmentOrdersQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAdjustmentOrdersQuery, GetAdjustmentOrdersQueryVariables>(GetAdjustmentOrdersDocument, options);
-        }
+export function useGetAdjustmentOrdersQuery(
+  baseOptions: Apollo.QueryHookOptions<GetAdjustmentOrdersQuery, GetAdjustmentOrdersQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetAdjustmentOrdersQuery, GetAdjustmentOrdersQueryVariables>(
+    GetAdjustmentOrdersDocument,
+    options
+  );
+}
+export function useGetAdjustmentOrdersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetAdjustmentOrdersQuery,
+    GetAdjustmentOrdersQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetAdjustmentOrdersQuery, GetAdjustmentOrdersQueryVariables>(
+    GetAdjustmentOrdersDocument,
+    options
+  );
+}
 export type GetAdjustmentOrdersQueryHookResult = ReturnType<typeof useGetAdjustmentOrdersQuery>;
-export type GetAdjustmentOrdersLazyQueryHookResult = ReturnType<typeof useGetAdjustmentOrdersLazyQuery>;
-export type GetAdjustmentOrdersQueryResult = Apollo.QueryResult<GetAdjustmentOrdersQuery, GetAdjustmentOrdersQueryVariables>;
+export type GetAdjustmentOrdersLazyQueryHookResult = ReturnType<
+  typeof useGetAdjustmentOrdersLazyQuery
+>;
+export type GetAdjustmentOrdersQueryResult = Apollo.QueryResult<
+  GetAdjustmentOrdersQuery,
+  GetAdjustmentOrdersQueryVariables
+>;
+export const GetHedgeableAssetsDocument = gql`
+  query GetHedgeableAssets {
+    hedgeableAssets {
+      asset
+      stepSize
+      symbol
+    }
+  }
+`;
 
+/**
+ * __useGetHedgeableAssetsQuery__
+ *
+ * To run a query within a React component, call `useGetHedgeableAssetsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetHedgeableAssetsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetHedgeableAssetsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetHedgeableAssetsQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetHedgeableAssetsQuery, GetHedgeableAssetsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetHedgeableAssetsQuery, GetHedgeableAssetsQueryVariables>(
+    GetHedgeableAssetsDocument,
+    options
+  );
+}
+export function useGetHedgeableAssetsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetHedgeableAssetsQuery,
+    GetHedgeableAssetsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetHedgeableAssetsQuery, GetHedgeableAssetsQueryVariables>(
+    GetHedgeableAssetsDocument,
+    options
+  );
+}
+export type GetHedgeableAssetsQueryHookResult = ReturnType<typeof useGetHedgeableAssetsQuery>;
+export type GetHedgeableAssetsLazyQueryHookResult = ReturnType<
+  typeof useGetHedgeableAssetsLazyQuery
+>;
+export type GetHedgeableAssetsQueryResult = Apollo.QueryResult<
+  GetHedgeableAssetsQuery,
+  GetHedgeableAssetsQueryVariables
+>;
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
-
 
 export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
 };
-export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> = ResolverFn<TResult, TParent, TContext, TArgs> | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
+export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
+  | ResolverFn<TResult, TParent, TContext, TArgs>
+  | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
 
 export type ResolverFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -238,7 +394,13 @@ export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
-export interface SubscriptionSubscriberObject<TResult, TKey extends string, TParent, TContext, TArgs> {
+export interface SubscriptionSubscriberObject<
+  TResult,
+  TKey extends string,
+  TParent,
+  TContext,
+  TArgs
+> {
   subscribe: SubscriptionSubscribeFn<{ [key in TKey]: TResult }, TParent, TContext, TArgs>;
   resolve?: SubscriptionResolveFn<TResult, { [key in TKey]: TResult }, TContext, TArgs>;
 }
@@ -252,7 +414,13 @@ export type SubscriptionObject<TResult, TKey extends string, TParent, TContext, 
   | SubscriptionSubscriberObject<TResult, TKey, TParent, TContext, TArgs>
   | SubscriptionResolverObject<TResult, TParent, TContext, TArgs>;
 
-export type SubscriptionResolver<TResult, TKey extends string, TParent = {}, TContext = {}, TArgs = {}> =
+export type SubscriptionResolver<
+  TResult,
+  TKey extends string,
+  TParent = {},
+  TContext = {},
+  TArgs = {}
+> =
   | ((...args: any[]) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)
   | SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>;
 
@@ -262,7 +430,11 @@ export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
   info: GraphQLResolveInfo
 ) => Maybe<TTypes> | Promise<Maybe<TTypes>>;
 
-export type IsTypeOfResolverFn<T = {}, TContext = {}> = (obj: T, context: TContext, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
+export type IsTypeOfResolverFn<T = {}, TContext = {}> = (
+  obj: T,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => boolean | Promise<boolean>;
 
 export type NextResolverFn<T> = () => Promise<T>;
 
@@ -274,15 +446,13 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
-
-
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   AdjustmentOrder: ResolverTypeWrapper<AdjustmentOrder>;
   BinanceCredentialsInput: BinanceCredentialsInput;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
-  Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  HedgeableAsset: ResolverTypeWrapper<HedgeableAsset>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
@@ -294,32 +464,70 @@ export type ResolversParentTypes = {
   BinanceCredentialsInput: BinanceCredentialsInput;
   Boolean: Scalars['Boolean']['output'];
   Float: Scalars['Float']['output'];
-  Int: Scalars['Int']['output'];
+  HedgeableAsset: HedgeableAsset;
   Mutation: {};
   Query: {};
   String: Scalars['String']['output'];
 };
 
-export type AdjustmentOrderResolvers<ContextType = any, ParentType extends ResolversParentTypes['AdjustmentOrder'] = ResolversParentTypes['AdjustmentOrder']> = {
+export type AdjustmentOrderResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['AdjustmentOrder'] = ResolversParentTypes['AdjustmentOrder']
+> = {
   asset?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   maxSpreadRate?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  quantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  quantity?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  canceledAdjustmentOrder?: Resolver<Maybe<ResolversTypes['AdjustmentOrder']>, ParentType, ContextType, RequireFields<MutationCanceledAdjustmentOrderArgs, 'asset' | 'credentials'>>;
-  createdAdjustmentOrder?: Resolver<Maybe<ResolversTypes['AdjustmentOrder']>, ParentType, ContextType, RequireFields<MutationCreatedAdjustmentOrderArgs, 'asset' | 'credentials' | 'maxSpreadRate' | 'quantity'>>;
+export type HedgeableAssetResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['HedgeableAsset'] = ResolversParentTypes['HedgeableAsset']
+> = {
+  asset?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  stepSize?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  symbol?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  adjustmentOrders?: Resolver<Array<ResolversTypes['AdjustmentOrder']>, ParentType, ContextType, RequireFields<QueryAdjustmentOrdersArgs, 'credentials'>>;
+export type MutationResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
+> = {
+  canceledAdjustmentOrder?: Resolver<
+    Maybe<ResolversTypes['AdjustmentOrder']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationCanceledAdjustmentOrderArgs, 'asset' | 'credentials'>
+  >;
+  createdAdjustmentOrder?: Resolver<
+    Maybe<ResolversTypes['AdjustmentOrder']>,
+    ParentType,
+    ContextType,
+    RequireFields<
+      MutationCreatedAdjustmentOrderArgs,
+      'asset' | 'credentials' | 'maxSpreadRate' | 'quantity'
+    >
+  >;
+};
+
+export type QueryResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
+> = {
+  adjustmentOrders?: Resolver<
+    Array<ResolversTypes['AdjustmentOrder']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryAdjustmentOrdersArgs, 'credentials'>
+  >;
+  hedgeableAssets?: Resolver<Array<ResolversTypes['HedgeableAsset']>, ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = any> = {
   AdjustmentOrder?: AdjustmentOrderResolvers<ContextType>;
+  HedgeableAsset?: HedgeableAssetResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
 };
-

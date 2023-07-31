@@ -1,7 +1,7 @@
 mutation CreateAdjustmentOrder(
   $asset: String!
   $maxSpreadRate: Float!
-  $quantity: Int!
+  $quantity: Float!
   $credentials: BinanceCredentialsInput!
 ) {
   createdAdjustmentOrder(
